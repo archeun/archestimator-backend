@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if estimate_list %}
+        <ul>
+            {% for estimate in estimate_list %}
+                <li><a href="/estimator/estimation/{{ estimate.id }}/">{{ estimate }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No Estimates are available.</p>
+    {% endif %}
+{% endblock %}

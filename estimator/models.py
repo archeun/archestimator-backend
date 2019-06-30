@@ -28,7 +28,7 @@ class Resource(models.Model):
 
 class Phase(models.Model):
     name = models.CharField(max_length=200)
-    project = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
     resources = models.ManyToManyField(Resource)
 
     def __str__(self):

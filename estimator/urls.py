@@ -1,9 +1,14 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework import routers
 
 from . import views
 
+router = routers.DefaultRouter()
+router.register(r'customers', views.CustomerViewSet)
+router.register(r'projects', views.ProjectViewSet)
+router.register(r'phases', views.PhaseViewSet)
+
 app_name = 'estimator'
 urlpatterns = [
-    path('', views.IndexView.as_view(), name='index'),
-    path('/estimation/<int:estimation_id>/', views.DetailView.as_view(), name='detail'),
+    path('api/', include(router.urls)),
 ]

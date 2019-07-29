@@ -2,19 +2,71 @@ from .models import *
 from rest_framework import serializers
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name')
+
+
+class ResourceSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Resource
+        fields = ('id', 'user', 'full_name')
+
+
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ('name',)
+        fields = ('id', 'name',)
 
 
 class ProjectSerializer(serializers.ModelSerializer):
+    customer = CustomerSerializer()
+
     class Meta:
         model = Project
-        fields = ('code', 'name', 'customer')
+        fields = ('id', 'code', 'name', 'customer')
 
 
 class PhaseSerializer(serializers.ModelSerializer):
+    project = ProjectSerializer()
+    manager = ResourceSerializer()
+
     class Meta:
         model = Phase
-        fields = ('name',)
+        fields = ('id', 'name', 'project', 'start_date', 'end_date', 'manager')
+
+
+class EstimateSerializer(serializers.ModelSerializer):
+    phase = PhaseSerializer()
+    owner = ResourceSerializer()
+
+    class Meta:
+        model = Estimate
+        fields = ('id', 'name', 'phase', 'owner',)
+
+
+class FeatureSerializer(serializers.ModelSerializer):
+    phase = PhaseSerializer()
+
+    class Meta:
+        model = Feature
+        fields = ('id', 'name', 'phase',)
+
+
+class SubActivitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubActivity
+        fields = ('id', 'name', 'estimated_time', 'note', 'is_completed')
+
+
+class ActivitySerializer(serializers.ModelSerializer):
+    feature = FeatureSerializer()
+    estimate = EstimateSerializer()
+    sub_activities = SubActivitySerializer(source='subactivity_set', many=True)
+
+    class Meta:
+        model = Activity
+        fields = ('id', 'name', 'feature', 'estimate', 'estimated_time', 'is_completed', 'sub_activities')

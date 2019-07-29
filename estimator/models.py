@@ -25,11 +25,17 @@ class Resource(models.Model):
     def __str__(self):
         return self.user.first_name + ' ' + self.user.last_name
 
+    def full_name(self):
+        return self.__str__()
+
 
 class Phase(models.Model):
     name = models.CharField(max_length=200)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     resources = models.ManyToManyField(Resource)
+    start_date = models.DateField(null=True)
+    end_date = models.DateField(null=True)
+    manager = models.ForeignKey(Resource, on_delete=models.CASCADE, related_name='phase_manager')
 
     def __str__(self):
         return self.name
@@ -44,14 +50,16 @@ class Feature(models.Model):
 
 
 class Estimate(models.Model):
-    feature = models.ForeignKey(Feature, on_delete=models.CASCADE)
+    name = models.CharField(max_length=1000)
+    phase = models.ForeignKey(Phase, on_delete=models.CASCADE)
     owner = models.ForeignKey(Resource, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.feature.name + ' : ' + self.owner.user.first_name + ' ' + self.owner.user.last_name
+        return self.name + '[' + self.phase.name + ' : ' + self.owner.user.first_name + ' ' + self.owner.user.last_name + ']'
 
 
 class Activity(models.Model):
+    feature = models.ForeignKey(Feature, on_delete=models.CASCADE)
     name = models.CharField(max_length=2000)
     estimate = models.ForeignKey(Estimate, on_delete=models.CASCADE)
     estimated_time = models.IntegerField()
@@ -64,8 +72,8 @@ class Activity(models.Model):
 class SubActivity(models.Model):
     name = models.CharField(max_length=2000)
     parent = models.ForeignKey(Activity, on_delete=models.CASCADE)
-    estimate = models.ForeignKey(Estimate, on_delete=models.CASCADE)
     estimated_time = models.IntegerField()
+    note = models.TextField(max_length=10000, null=True)
     is_completed = models.BooleanField()
 
     def __str__(self):

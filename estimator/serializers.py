@@ -39,21 +39,22 @@ class PhaseSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'project', 'start_date', 'end_date', 'manager')
 
 
-class EstimateSerializer(serializers.ModelSerializer):
-    phase = PhaseSerializer()
-    owner = ResourceSerializer()
-
-    class Meta:
-        model = Estimate
-        fields = ('id', 'name', 'phase', 'owner',)
-
-
 class FeatureSerializer(serializers.ModelSerializer):
     phase = PhaseSerializer()
 
     class Meta:
         model = Feature
         fields = ('id', 'name', 'phase',)
+
+
+class EstimateSerializer(serializers.ModelSerializer):
+    phase = PhaseSerializer()
+    owner = ResourceSerializer()
+    features = FeatureSerializer(source='phase.feature_set', many=True)
+
+    class Meta:
+        model = Estimate
+        fields = ('id', 'name', 'phase', 'owner', 'features',)
 
 
 class SubActivitySerializer(serializers.ModelSerializer):

@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from estimator.serializers import *
-from estimator.services import phase, project, customer, estimate, activity
+from estimator.services import phase, project, customer, estimate, activity, subactivity
 from .models import *
 
 
@@ -101,9 +101,48 @@ class ActivityViewSet(ArchestAuthenticatedModelViewSet):
         """
         partial = kwargs.pop('partial', False)
 
-        instance = self.get_object()  # type:Activity
-        instance.feature_id = request.data['feature_id']
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+        activity_obj = self.get_object()  # type:Activity
+        activity_obj.feature_id = request.data['feature_id']
+        activity_serializer = self.get_serializer(activity_obj, data=request.data, partial=partial)
+        activity_serializer.is_valid(raise_exception=True)
+        activity_serializer.save()
+        return Response(activity_serializer.data)
+
+
+class SubActivityViewSet(ArchestAuthenticatedModelViewSet):
+    """
+    API endpoint that allows SubActivities to be viewed or edited.
+    """
+
+    queryset = SubActivity.objects.none()
+    serializer_class = SubActivitySerializer
+
+    def get_queryset(self):
+        return subactivity.get_records(self.request)
+
+    def create(self, request, *args, **kwargs):
+        sub_activity_object = SubActivity.objects.create(
+            parent_id=request.data['parent_id'],
+            name=request.data['name'],
+            estimated_time=request.data['estimated_time'],
+            is_completed=False
+        )  # type:SubActivity
+        sub_activity_serializer = self.get_serializer(sub_activity_object, data=request.data)
+        sub_activity_serializer.is_valid(raise_exception=True)
+        sub_activity_serializer.save()
+        return Response(sub_activity_serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        """
+        TODO: Refactor this function to handle validations properly. Also should be generic.
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        partial = kwargs.pop('partial', False)
+        sub_activity_object = self.get_object()  # type:SubActivity
+        sub_activity_serializer = self.get_serializer(sub_activity_object, data=request.data, partial=partial)
+        sub_activity_serializer.is_valid(raise_exception=True)
+        sub_activity_serializer.save()
+        return Response(sub_activity_serializer.data)

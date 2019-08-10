@@ -60,13 +60,16 @@ class Estimate(models.Model):
 
 class Activity(models.Model):
     feature = models.ForeignKey(Feature, on_delete=models.CASCADE)
-    name = models.CharField(max_length=2000)
+    name = models.CharField(max_length=2000, default='')
     estimate = models.ForeignKey(Estimate, on_delete=models.CASCADE)
-    estimated_time = models.IntegerField()
-    is_completed = models.BooleanField()
+    estimated_time = models.IntegerField(default=0)
+    is_completed = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.name
+        if self.name:
+            return self.name
+
+        return 'null'
 
 
 class SubActivity(models.Model):

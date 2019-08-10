@@ -91,6 +91,20 @@ class ActivityViewSet(ArchestAuthenticatedModelViewSet):
     def get_queryset(self):
         return activity.get_records(self.request)
 
+    def create(self, request, *args, **kwargs):
+        print(request.data)
+        activity_object = Activity.objects.create(
+            feature_id=request.data['feature_id'],
+            name=request.data['name'],
+            estimate_id=request.data['estimate_id'],
+            estimated_time=request.data['estimated_time'],
+            is_completed=request.data['is_completed']
+        )  # type:Activity
+        activity_serializer = self.get_serializer(activity_object, data=request.data, partial=True)
+        activity_serializer.is_valid(raise_exception=True)
+        activity_serializer.save()
+        return Response(activity_serializer.data)
+
     def update(self, request, *args, **kwargs):
         """
         TODO: Refactor this function to handle validations properly. Also should be generic.

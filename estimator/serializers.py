@@ -60,7 +60,7 @@ class EstimateSerializer(serializers.ModelSerializer):
 class SubActivitySerializer(serializers.ModelSerializer):
     class Meta:
         model = SubActivity
-        fields = ('id', 'name', 'estimated_time', 'note', 'is_completed', 'parent_id')
+        fields = ('id', 'name', 'estimated_time', 'note', 'status', 'parent_id')
 
 
 class ActivitySerializer(serializers.ModelSerializer):
@@ -70,4 +70,4 @@ class ActivitySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Activity
-        fields = ('id', 'name', 'feature', 'estimate', 'estimated_time', 'is_completed', 'sub_activities')
+        fields = ('id', 'name', 'feature', 'estimate', 'estimated_time', 'status', 'sub_activities')

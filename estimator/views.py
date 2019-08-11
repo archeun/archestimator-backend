@@ -98,7 +98,7 @@ class ActivityViewSet(ArchestAuthenticatedModelViewSet):
             name=request.data['name'],
             estimate_id=request.data['estimate_id'],
             estimated_time=request.data['estimated_time'],
-            is_completed=request.data['is_completed']
+            status=request.data['status']
         )  # type:Activity
         activity_serializer = self.get_serializer(activity_object, data=request.data, partial=True)
         activity_serializer.is_valid(raise_exception=True)
@@ -139,7 +139,7 @@ class SubActivityViewSet(ArchestAuthenticatedModelViewSet):
             parent_id=request.data['parent_id'],
             name=request.data['name'],
             estimated_time=request.data['estimated_time'],
-            is_completed=False
+            status=request.data['status'],
         )  # type:SubActivity
         sub_activity_serializer = self.get_serializer(sub_activity_object, data=request.data)
         sub_activity_serializer.is_valid(raise_exception=True)

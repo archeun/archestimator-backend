@@ -58,7 +58,7 @@ class Estimate(models.Model):
         return self.name + '[' + self.phase.name + ' : ' + self.owner.user.first_name + ' ' + self.owner.user.last_name + ']'
 
 
-ACTIVITY_STATUSES = (
+STATUSES = (
     ('1', 'Backlog'),
     ('2', 'In Progress'),
     ('3', 'Completed'),
@@ -67,11 +67,12 @@ ACTIVITY_STATUSES = (
 
 
 class Activity(models.Model):
+    STATUS_CHOICES = STATUSES
     feature = models.ForeignKey(Feature, on_delete=models.CASCADE)
     name = models.CharField(max_length=2000, default='')
     estimate = models.ForeignKey(Estimate, on_delete=models.CASCADE)
     estimated_time = models.IntegerField(default=0)
-    status = models.CharField(max_length=1, choices=ACTIVITY_STATUSES)
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES)
 
     def __str__(self):
         if self.name:
@@ -81,12 +82,13 @@ class Activity(models.Model):
 
 
 class SubActivity(models.Model):
+    STATUS_CHOICES = STATUSES
     name = models.CharField(max_length=2000, default='')
     parent = models.ForeignKey(Activity, on_delete=models.CASCADE)
     estimated_time = models.IntegerField(default=0)
     note = models.TextField(max_length=10000, null=True)
     is_completed = models.BooleanField(default=False)
-    status = models.CharField(max_length=1, choices=ACTIVITY_STATUSES)
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES)
 
     def __str__(self):
         return self.name

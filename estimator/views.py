@@ -14,6 +14,11 @@ class ArchestAuthenticatedModelViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
 
 
+"""
+TODO: IMPORTANT!!!!!!!!!! --------- For All CRUD operations check authenticate and authorize the requests. ------------- 
+"""
+
+
 class CustomerViewSet(ArchestAuthenticatedModelViewSet):
     """
     API endpoint that allows Customers to be viewed or edited.
@@ -68,6 +73,19 @@ class EstimateViewSet(ArchestAuthenticatedModelViewSet):
     def get_queryset(self):
         return estimate.get_records(self.request)
 
+    def create(self, request, *args, **kwargs):
+        logged_in_user = User.objects.filter(username=request.user).first()  # type:User
+        phase_added_to = Phase.objects.filter(id=request.data['phase_id']).first()  # type:Phase
+        estimate_object = Estimate.objects.create(
+            owner_id=logged_in_user.resource.id,
+            name=phase_added_to.name + ' ' + ' - Estimate by ' + logged_in_user.first_name,
+            phase_id=request.data['phase_id'],
+        )  # type:Estimate
+        estimate_serializer = self.get_serializer(estimate_object, data=request.data, partial=True)
+        estimate_serializer.is_valid(raise_exception=True)
+        estimate_serializer.save()
+        return Response(estimate_serializer.data)
+
     @action(detail=True, methods=['get'])
     def detailed_view(self, request, pk=None):
         """
@@ -92,7 +110,6 @@ class ActivityViewSet(ArchestAuthenticatedModelViewSet):
         return activity.get_records(self.request)
 
     def create(self, request, *args, **kwargs):
-        print(request.data)
         activity_object = Activity.objects.create(
             feature_id=request.data['feature_id'],
             name=request.data['name'],

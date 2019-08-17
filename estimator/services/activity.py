@@ -1,3 +1,5 @@
+from django.contrib.auth.models import User
+
 from estimator.models import Activity
 
 
@@ -9,4 +11,7 @@ def get_records(request):
     :type request: Request
     :return:
     """
-    return Activity.objects.filter(estimate__owner__user__username=request.user)
+    user = request.user  # type:User
+    if user.groups.filter(name='Project Admins').exists():
+        return Activity.objects.all()
+    return Activity.objects.filter(estimate__owner__user__username=user)

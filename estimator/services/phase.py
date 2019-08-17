@@ -1,3 +1,5 @@
+from django.contrib.auth.models import User
+
 from estimator.models import Phase
 
 
@@ -9,7 +11,11 @@ def get_records(request):
     :type request: Request
     :return:
     """
-    return Phase.objects.filter(resources__user__username=request.user)
+    user = request.user  # type:User
+    if user.groups.filter(name='Project Admins').exists():
+        return Phase.objects.all()
+
+    return Phase.objects.filter(resources__user__username=user)
 
 
 def get_estimates(request, phase_id):
@@ -21,4 +27,8 @@ def get_estimates(request, phase_id):
     :type request: Request
     :return:
     """
-    return Phase.objects.get(pk=phase_id).estimate_set.filter(owner__user__username=request.user)
+    user = request.user  # type:User
+    if user.groups.filter(name='Project Admins').exists():
+        return Phase.objects.get(pk=phase_id).estimate_set.all()
+
+    return Phase.objects.get(pk=phase_id).estimate_set.filter(user)

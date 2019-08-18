@@ -71,3 +71,19 @@ class ActivitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Activity
         fields = ('id', 'name', 'feature', 'estimate', 'estimated_time', 'status', 'sub_activities', 'STATUS_CHOICES')
+
+
+class ActivityWorkEntrySerializer(serializers.ModelSerializer):
+    activity = ActivitySerializer()
+
+    class Meta:
+        model = ActivityWorkEntry
+        fields = ('id', 'date', 'worked_hours', 'activity', 'note',)
+
+
+class SubActivityWorkEntrySerializer(serializers.ModelSerializer):
+    sub_activity = SubActivitySerializer()
+
+    class Meta:
+        model = SubActivityWorkEntry
+        fields = ('id', 'date', 'worked_hours', 'sub_activity', 'note',)

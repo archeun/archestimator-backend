@@ -10,6 +10,8 @@ router.register(r'phases', views.PhaseViewSet)
 router.register(r'estimates', views.EstimateViewSet)
 router.register(r'activities', views.ActivityViewSet)
 router.register(r'sub_activities', views.SubActivityViewSet)
+router.register(r'activity_work_entries', views.ActivityWorkEntriesViewSet)
+router.register(r'sub_activity_work_entries', views.SubActivityWorkEntriesViewSet)
 # router.register(r'phase/<int:phaseId>/estimates/', views.PhaseViewSet.get_estimates)
 
 app_name = 'estimator'

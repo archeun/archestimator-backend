@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from estimator.serializers import *
-from estimator.services import phase, project, customer, estimate, activity, subactivity
+from estimator.services import phase, project, customer, estimate, activity, subactivity, work_entries
 from .models import *
 
 
@@ -177,3 +177,29 @@ class SubActivityViewSet(ArchestAuthenticatedModelViewSet):
         sub_activity_serializer.is_valid(raise_exception=True)
         sub_activity_serializer.save()
         return Response(sub_activity_serializer.data)
+
+
+class ActivityWorkEntriesViewSet(ArchestAuthenticatedModelViewSet):
+    """
+    API endpoint that allows Activity Work Entries to be viewed or edited.
+    """
+
+    queryset = ActivityWorkEntry.objects.none()
+
+    def get_queryset(self):
+        return work_entries.get_activity_work_entries(self.request)
+
+    serializer_class = ActivityWorkEntrySerializer
+
+
+class SubActivityWorkEntriesViewSet(ArchestAuthenticatedModelViewSet):
+    """
+    API endpoint that allows SubActivity Work Entries to be viewed or edited.
+    """
+
+    queryset = SubActivityWorkEntry.objects.none()
+
+    def get_queryset(self):
+        return work_entries.get_sub_activity_work_entries(self.request)
+
+    serializer_class = SubActivityWorkEntrySerializer

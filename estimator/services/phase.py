@@ -31,4 +31,4 @@ def get_estimates(request, phase_id):
     if user.groups.filter(name='Project Admins').exists():
         return Phase.objects.get(pk=phase_id).estimate_set.all()
 
-    return Phase.objects.get(pk=phase_id).estimate_set.filter(user)
+    return Phase.objects.get(pk=phase_id).estimate_set.filter(owner__user__username=user)

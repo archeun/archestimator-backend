@@ -92,3 +92,26 @@ class SubActivity(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ActivityWorkEntry(models.Model):
+    date = models.DateField()
+    worked_hours = models.FloatField(default=0)
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE)
+    note = models.TextField(max_length=10000, default='', null=True)
+
+    def __str__(self):
+        return self.activity.estimate.owner.full_name() + ' worked on Activity ' + self.activity.name + ' on ' \
+               + self.date.strftime('%Y-%m-%d') + ' for ' + self.worked_hours.__str__() + ' Hrs.'
+
+
+class SubActivityWorkEntry(models.Model):
+    date = models.DateField()
+    worked_hours = models.FloatField(default=0)
+    sub_activity = models.ForeignKey(SubActivity, on_delete=models.CASCADE)
+    note = models.TextField(max_length=10000, default='', null=True)
+
+    def __str__(self):
+        return self.sub_activity.parent.estimate.owner.full_name() + ' worked on Sub Activity ' \
+               + self.sub_activity.name + ' on ' + self.date.strftime('%Y-%m-%d') + ' for ' + self.worked_hours.__str__() \
+               + ' Hrs.'

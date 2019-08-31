@@ -9,7 +9,7 @@ def get_activity_work_entries(request):
 
     :param request: request object
     :type request: Request
-    :return:
+    :return: QuerySet
     """
     user = request.user  # type:User
     if user.groups.filter(name='Project Admins').exists():
@@ -23,7 +23,7 @@ def get_sub_activity_work_entries(request):
 
     :param request: request object
     :type request: Request
-    :return:
+    :return: QuerySet
     """
     user = request.user  # type:User
     if user.groups.filter(name='Project Admins').exists():

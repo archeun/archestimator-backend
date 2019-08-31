@@ -3,6 +3,7 @@ from rest_framework.authentication import TokenAuthentication, SessionAuthentica
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from estimator.serializers import *
 from estimator.services import phase, project, customer, estimate, activity, subactivity, work_entries
@@ -191,6 +192,18 @@ class ActivityWorkEntriesViewSet(ArchestAuthenticatedModelViewSet):
 
     serializer_class = ActivityWorkEntrySerializer
 
+    def create(self, request, *args, **kwargs):
+        activity_we_object = ActivityWorkEntry.objects.create(
+            activity_id=request.data['activity_id'],
+            worked_hours=request.data['worked_hours'],
+            date=request.data['date'],
+            note=request.data['note'],
+        )  # type:ActivityWorkEntry
+        activity_we_serializer = self.get_serializer(activity_we_object, data=request.data, partial=True)
+        activity_we_serializer.is_valid(raise_exception=True)
+        activity_we_serializer.save()
+        return Response(activity_we_serializer.data)
+
 
 class SubActivityWorkEntriesViewSet(ArchestAuthenticatedModelViewSet):
     """
@@ -203,3 +216,15 @@ class SubActivityWorkEntriesViewSet(ArchestAuthenticatedModelViewSet):
         return work_entries.get_sub_activity_work_entries(self.request)
 
     serializer_class = SubActivityWorkEntrySerializer
+
+    def create(self, request, *args, **kwargs):
+        sub_activity_we_object = SubActivityWorkEntry.objects.create(
+            sub_activity_id=request.data['sub_activity_id'],
+            worked_hours=request.data['worked_hours'],
+            date=request.data['date'],
+            note=request.data['note'],
+        )  # type:SubActivityWorkEntry
+        sub_activity_we_serializer = self.get_serializer(sub_activity_we_object, data=request.data, partial=True)
+        sub_activity_we_serializer.is_valid(raise_exception=True)
+        sub_activity_we_serializer.save()
+        return Response(sub_activity_we_serializer.data)

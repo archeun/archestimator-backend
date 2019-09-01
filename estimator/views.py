@@ -204,6 +204,23 @@ class ActivityWorkEntriesViewSet(ArchestAuthenticatedModelViewSet):
         activity_we_serializer.save()
         return Response(activity_we_serializer.data)
 
+    def update(self, request, *args, **kwargs):
+        """
+        TODO: Refactor this function to handle validations properly. Also should be generic.
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+
+        partial = kwargs.pop('partial', False)
+        activity_we_object = self.get_object()  # type:ActivityWorkEntry
+        activity_we_object.activity_id = request.data['activity_id']
+        activity_we_serializer = self.get_serializer(activity_we_object, data=request.data, partial=partial)
+        activity_we_serializer.is_valid(raise_exception=True)
+        activity_we_serializer.save()
+        return Response(activity_we_serializer.data)
+
 
 class SubActivityWorkEntriesViewSet(ArchestAuthenticatedModelViewSet):
     """
@@ -225,6 +242,22 @@ class SubActivityWorkEntriesViewSet(ArchestAuthenticatedModelViewSet):
             note=request.data['note'],
         )  # type:SubActivityWorkEntry
         sub_activity_we_serializer = self.get_serializer(sub_activity_we_object, data=request.data, partial=True)
+        sub_activity_we_serializer.is_valid(raise_exception=True)
+        sub_activity_we_serializer.save()
+        return Response(sub_activity_we_serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        """
+        TODO: Refactor this function to handle validations properly. Also should be generic.
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        partial = kwargs.pop('partial', False)
+        sub_activity_we_object = self.get_object()  # type:SubActivityWorkEntry
+        sub_activity_we_object.sub_activity_id = request.data['sub_activity_id']
+        sub_activity_we_serializer = self.get_serializer(sub_activity_we_object, data=request.data, partial=partial)
         sub_activity_we_serializer.is_valid(raise_exception=True)
         sub_activity_we_serializer.save()
         return Response(sub_activity_we_serializer.data)

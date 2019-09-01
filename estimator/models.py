@@ -93,6 +93,21 @@ class SubActivity(models.Model):
     def __str__(self):
         return self.name
 
+    def parent_activity_name(self):
+        return self.parent.name
+
+    def parent_activity_id(self):
+        return self.parent.id
+
+    def estimate_name(self):
+        return self.parent.estimate.name
+
+    def estimate_id(self):
+        return self.parent.estimate.id
+
+    def feature_name(self):
+        return self.parent.feature.name
+
 
 class ActivityWorkEntry(models.Model):
     date = models.DateField()
@@ -113,5 +128,6 @@ class SubActivityWorkEntry(models.Model):
 
     def __str__(self):
         return self.sub_activity.parent.estimate.owner.full_name() + ' worked on Sub Activity ' \
-               + self.sub_activity.name + ' on ' + self.date.strftime('%Y-%m-%d') + ' for ' + self.worked_hours.__str__() \
+               + self.sub_activity.name + ' on ' + self.date.strftime(
+            '%Y-%m-%d') + ' for ' + self.worked_hours.__str__() \
                + ' Hrs.'

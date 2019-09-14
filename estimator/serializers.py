@@ -80,7 +80,7 @@ class ActivityWorkEntrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ActivityWorkEntry
-        fields = ('id', 'date', 'worked_hours', 'activity', 'note',)
+        fields = ('id', 'date', 'worked_hours', 'activity', 'note', 'ENTRY_TYPE')
 
 
 class SubActivityWorkEntrySerializer(serializers.ModelSerializer):
@@ -88,4 +88,4 @@ class SubActivityWorkEntrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SubActivityWorkEntry
-        fields = ('id', 'date', 'worked_hours', 'sub_activity', 'note',)
+        fields = ('id', 'date', 'worked_hours', 'sub_activity', 'note', 'ENTRY_TYPE')

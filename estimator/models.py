@@ -110,6 +110,7 @@ class SubActivity(models.Model):
 
 
 class ActivityWorkEntry(models.Model):
+    ENTRY_TYPE = 'ACTIVITY_WORK_ENTRY_TYPE'
     date = models.DateField()
     worked_hours = models.FloatField(default=0)
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE)
@@ -121,6 +122,7 @@ class ActivityWorkEntry(models.Model):
 
 
 class SubActivityWorkEntry(models.Model):
+    ENTRY_TYPE = 'SUB_ACTIVITY_WORK_ENTRY_TYPE'
     date = models.DateField()
     worked_hours = models.FloatField(default=0)
     sub_activity = models.ForeignKey(SubActivity, on_delete=models.CASCADE)

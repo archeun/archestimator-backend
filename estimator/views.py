@@ -185,12 +185,12 @@ class ActivityWorkEntriesViewSet(ArchestAuthenticatedModelViewSet):
     API endpoint that allows Activity Work Entries to be viewed or edited.
     """
 
+    pagination_class = None
     queryset = ActivityWorkEntry.objects.none()
+    serializer_class = ActivityWorkEntrySerializer
 
     def get_queryset(self):
         return work_entries.get_activity_work_entries(self.request)
-
-    serializer_class = ActivityWorkEntrySerializer
 
     def create(self, request, *args, **kwargs):
         activity_we_object = ActivityWorkEntry.objects.create(
@@ -226,13 +226,12 @@ class SubActivityWorkEntriesViewSet(ArchestAuthenticatedModelViewSet):
     """
     API endpoint that allows SubActivity Work Entries to be viewed or edited.
     """
-
+    pagination_class = None
     queryset = SubActivityWorkEntry.objects.none()
+    serializer_class = SubActivityWorkEntrySerializer
 
     def get_queryset(self):
         return work_entries.get_sub_activity_work_entries(self.request)
-
-    serializer_class = SubActivityWorkEntrySerializer
 
     def create(self, request, *args, **kwargs):
         sub_activity_we_object = SubActivityWorkEntry.objects.create(

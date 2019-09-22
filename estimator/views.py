@@ -98,6 +98,17 @@ class EstimateViewSet(ArchestAuthenticatedModelViewSet):
         activity_serializer = ActivitySerializer(Activity.objects.filter(estimate=pk), many=True)
         return Response({"results": activity_serializer.data})
 
+    @action(detail=True, methods=['get'])
+    def progress(self, request, pk=None):
+        """
+        Returns the Progress of the Activities/Sub Activities of the Estimate
+        :param request:
+        :param pk:
+        :return:
+        """
+        # TODO: Check whether the requested estimate is accessible by the logged in user
+        return Response({"results": estimate.get_progress(pk)})
+
 
 class ActivityViewSet(ArchestAuthenticatedModelViewSet):
     """

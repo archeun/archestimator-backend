@@ -59,15 +59,17 @@ def get_progress(estimate_id):
             sub_activities = activity.subactivity_set.all()
             for sub_activity in sub_activities:
                 sub_activity_details = {
+                    'id': sub_activity.id,
                     'name': sub_activity.name,
                     'estimated_time': sub_activity.estimated_time,
+                    'entered_time': 0,
                     'status': sub_activity.status,
                     'work_entries': []
                 }
                 sub_activity_work_entries = sub_activity.subactivityworkentry_set.all()
-
+                sub_activity_work_entry_total_time = 0
                 for sub_activity_work_entry in sub_activity_work_entries:
-                    entered_time_to_sub_activities += sub_activity_work_entry.worked_hours
+                    sub_activity_work_entry_total_time += sub_activity_work_entry.worked_hours
                     sub_activity_details['work_entries'].append(
                         {
                             'id': sub_activity_work_entry.id,
@@ -76,8 +78,40 @@ def get_progress(estimate_id):
                             'note': sub_activity_work_entry.note,
                         }
                     )
+
+                entered_time_to_sub_activities += sub_activity_work_entry_total_time
+                sub_activity_details['entered_time'] = sub_activity_work_entry_total_time
+                sub_activity_details['remaining_time'] = sub_activity_details['estimated_time'] - sub_activity_work_entry_total_time
+                sub_activity_details['completion_percentage'] = get_completion_percentage_for_sub_activity(sub_activity_details)
                 activity_details['sub_activities'].append(sub_activity_details)
-                activity_details['entered_time_to_sub_activities'] = entered_time_to_sub_activities
+
+            activity_details['entered_time_to_sub_activities'] = entered_time_to_sub_activities
+            activity_details['total_entered_time'] = activity_details['entered_time_to_sub_activities'] + activity_details['entered_time_directly_to_activity']
+            activity_details['remaining_time'] = activity_details['estimated_time'] - activity_details['total_entered_time']
+            activity_details['completion_percentage'] = get_completion_percentage_for_activity(activity_details)
             feature_data['activities'].append(activity_details)
         progress['features'].append(feature_data)
     return progress
+
+
+def get_completion_percentage_for_activity(activity_details):
+    completion_percentage = 0
+    total_entered = activity_details['entered_time_to_sub_activities'] + activity_details[
+        'entered_time_directly_to_activity']
+    estimated_time = activity_details['estimated_time']
+
+    if estimated_time > 0:
+        completion_percentage = min((total_entered / estimated_time) * 100, 100)
+
+    return round(completion_percentage, 2)
+
+
+def get_completion_percentage_for_sub_activity(sub_activity_details):
+    completion_percentage = 0
+    total_entered = sub_activity_details['entered_time']
+    estimated_time = sub_activity_details['estimated_time']
+
+    if estimated_time > 0:
+        completion_percentage = min((total_entered / estimated_time) * 100, 100)
+
+    return round(completion_percentage, 2)

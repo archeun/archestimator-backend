@@ -32,11 +32,11 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 class PhaseSerializer(serializers.ModelSerializer):
     project = ProjectSerializer()
-    manager = ResourceSerializer()
+    managers = ResourceSerializer(read_only=True, many=True)
 
     class Meta:
         model = Phase
-        fields = ('id', 'name', 'project', 'start_date', 'end_date', 'manager')
+        fields = ('id', 'name', 'project', 'start_date', 'end_date', 'managers')
 
 
 class FeatureSerializer(serializers.ModelSerializer):

@@ -32,10 +32,10 @@ class Resource(models.Model):
 class Phase(models.Model):
     name = models.CharField(max_length=200)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    resources = models.ManyToManyField(Resource)
+    resources = models.ManyToManyField(Resource, related_name='phase_resources')
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
-    manager = models.ForeignKey(Resource, on_delete=models.CASCADE, related_name='phase_manager')
+    managers = models.ManyToManyField(Resource, related_name='phase_managers')
 
     def __str__(self):
         return self.name

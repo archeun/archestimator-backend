@@ -32,3 +32,19 @@ def get_estimates(request, phase_id):
         return Phase.objects.get(pk=phase_id).estimate_set.all()
 
     return Phase.objects.get(pk=phase_id).estimate_set.filter(owner__user__username=user)
+
+
+def get_resources(request, phase_id):
+    """
+    Returns the Resource objects, assigned to the given Phase
+
+    :param phase_id: pk of the Phase to consider
+    :param request: request object
+    :type request: Request
+    :return:
+    """
+    user = request.user  # type:User
+    if user.groups.filter(name='Project Admins').exists():
+        return Phase.objects.get(pk=phase_id).estimate_set.all()
+
+    return Phase.objects.get(pk=phase_id).resources.all()

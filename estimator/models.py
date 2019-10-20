@@ -53,9 +53,16 @@ class Estimate(models.Model):
     name = models.CharField(max_length=1000)
     phase = models.ForeignKey(Phase, on_delete=models.CASCADE)
     owner = models.ForeignKey(Resource, on_delete=models.CASCADE)
+    resources = models.ManyToManyField(Resource, through='EstimateResources', related_name='estimate_resources')
 
     def __str__(self):
         return self.name + '[' + self.phase.name + ' : ' + self.owner.user.first_name + ' ' + self.owner.user.last_name + ']'
+
+
+class EstimateResources(models.Model):
+    resource = models.ForeignKey(Resource, on_delete=models.CASCADE)
+    estimate = models.ForeignKey(Estimate, on_delete=models.CASCADE)
+    access_level = models.CharField(max_length=1, choices=(('1', 'View'), ('2', 'Edit')))
 
 
 STATUSES = (
@@ -73,6 +80,7 @@ class Activity(models.Model):
     estimate = models.ForeignKey(Estimate, on_delete=models.CASCADE)
     estimated_time = models.FloatField(default=0)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES)
+    owner = models.ForeignKey(Resource, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         if self.name:
@@ -89,6 +97,7 @@ class SubActivity(models.Model):
     note = models.TextField(max_length=10000, null=True)
     is_completed = models.BooleanField(default=False)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES)
+    owner = models.ForeignKey(Resource, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.name

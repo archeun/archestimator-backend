@@ -62,6 +62,11 @@ class PhaseViewSet(ArchestAuthenticatedModelViewSet):
         estimate_serializer = EstimateSerializer(phase.get_estimates(request, pk), many=True)
         return Response({"results": estimate_serializer.data})
 
+    @action(detail=True, methods=['get'])
+    def resources(self, request, pk=None):
+        resource_serializer = ResourceSerializer(phase.get_resources(request, pk), many=True)
+        return Response({"results": resource_serializer.data})
+
 
 class EstimateViewSet(ArchestAuthenticatedModelViewSet):
     """

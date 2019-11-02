@@ -53,16 +53,32 @@ class Estimate(models.Model):
     name = models.CharField(max_length=1000)
     phase = models.ForeignKey(Phase, on_delete=models.CASCADE)
     owner = models.ForeignKey(Resource, on_delete=models.CASCADE)
-    resources = models.ManyToManyField(Resource, through='EstimateResources', related_name='estimate_resources')
+    resources = models.ManyToManyField(Resource, through='EstimateResource', related_name='estimate_resources')
 
     def __str__(self):
         return self.name + '[' + self.phase.name + ' : ' + self.owner.user.first_name + ' ' + self.owner.user.last_name + ']'
 
 
-class EstimateResources(models.Model):
+ESTIMATE_ACCESS_LEVELS = (
+    ('1', 'View'),
+    ('2', 'Edit')
+)
+
+
+class EstimateResource(models.Model):
+    ESTIMATE_ACCESS_LEVELS = ESTIMATE_ACCESS_LEVELS
     resource = models.ForeignKey(Resource, on_delete=models.CASCADE)
     estimate = models.ForeignKey(Estimate, on_delete=models.CASCADE)
-    access_level = models.CharField(max_length=1, choices=(('1', 'View'), ('2', 'Edit')))
+    access_level = models.CharField(max_length=1, choices=ESTIMATE_ACCESS_LEVELS)
+
+    def estimate_id(self):
+        return self.estimate.id
+
+    def access_level_name(self):
+        return self.get_access_level_display()
+
+    def __str__(self):
+        return self.estimate.name + ": " + self.resource.full_name() + ' [' + self.get_access_level_display() + ']'
 
 
 STATUSES = (

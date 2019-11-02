@@ -57,6 +57,14 @@ class EstimateSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'phase', 'owner', 'features',)
 
 
+class EstimateResourceSerializer(serializers.ModelSerializer):
+    resource = ResourceSerializer()
+
+    class Meta:
+        model = EstimateResource
+        fields = ('id', 'estimate_id', 'resource', 'access_level', 'access_level_name',)
+
+
 class SubActivitySerializer(serializers.ModelSerializer):
     class Meta:
         model = SubActivity

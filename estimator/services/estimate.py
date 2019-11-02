@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 
-from estimator.models import Estimate
+from estimator.models import Estimate, EstimateResource
 from estimator.serializers import FeatureSerializer
 
 
@@ -81,13 +81,17 @@ def get_progress(estimate_id):
 
                 entered_time_to_sub_activities += sub_activity_work_entry_total_time
                 sub_activity_details['entered_time'] = sub_activity_work_entry_total_time
-                sub_activity_details['remaining_time'] = sub_activity_details['estimated_time'] - sub_activity_work_entry_total_time
-                sub_activity_details['completion_percentage'] = get_completion_percentage_for_sub_activity(sub_activity_details)
+                sub_activity_details['remaining_time'] = sub_activity_details[
+                                                             'estimated_time'] - sub_activity_work_entry_total_time
+                sub_activity_details['completion_percentage'] = get_completion_percentage_for_sub_activity(
+                    sub_activity_details)
                 activity_details['sub_activities'].append(sub_activity_details)
 
             activity_details['entered_time_to_sub_activities'] = entered_time_to_sub_activities
-            activity_details['total_entered_time'] = activity_details['entered_time_to_sub_activities'] + activity_details['entered_time_directly_to_activity']
-            activity_details['remaining_time'] = activity_details['estimated_time'] - activity_details['total_entered_time']
+            activity_details['total_entered_time'] = activity_details['entered_time_to_sub_activities'] + \
+                                                     activity_details['entered_time_directly_to_activity']
+            activity_details['remaining_time'] = activity_details['estimated_time'] - activity_details[
+                'total_entered_time']
             activity_details['completion_percentage'] = get_completion_percentage_for_activity(activity_details)
             feature_data['activities'].append(activity_details)
         progress['features'].append(feature_data)
@@ -115,3 +119,43 @@ def get_completion_percentage_for_sub_activity(sub_activity_details):
         completion_percentage = min((total_entered / estimated_time) * 100, 100)
 
     return round(completion_percentage, 2)
+
+
+def update_shared_resources(estimate, shared_resources_options):
+    """
+    Updates the EstimateResource which the given estimate is shared with
+    :param estimate: Estimate
+    :param shared_resources_options: QueryDict
+    :return:
+    """
+    existing_resources = estimate.estimateresource_set.all()
+    existing_resource_ids = []
+    updated_resource_ids = []
+    for existing_resource in existing_resources:
+        existing_resource_ids.append(int(existing_resource.resource.id))
+
+    for resource_id in shared_resources_options:
+        updated_resource_ids.append(int(resource_id))
+
+    deleted_resource_ids = set(existing_resource_ids) - set(updated_resource_ids)
+    newly_added_resource_ids = set(updated_resource_ids) - set(existing_resource_ids)
+
+    for deleted_resource_id in deleted_resource_ids:
+        existing_resources.filter(resource_id=deleted_resource_id).delete()
+
+    for resource_id in shared_resources_options:
+        access_level = shared_resources_options[resource_id]
+        if int(resource_id) in newly_added_resource_ids:
+            new_estimate_resource = EstimateResource.objects.create(
+                estimate_id=estimate.id,
+                resource_id=resource_id,
+                access_level=access_level
+            )  # type:EstimateResource
+
+            new_estimate_resource.save()
+        else:
+            existing_resource = existing_resources.get(resource_id=resource_id)
+            existing_resource.access_level = access_level
+            existing_resource.save()
+
+    return True

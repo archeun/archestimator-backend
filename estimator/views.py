@@ -114,6 +114,32 @@ class EstimateViewSet(ArchestAuthenticatedModelViewSet):
         # TODO: Check whether the requested estimate is accessible by the logged in user
         return Response({"results": estimate.get_progress(pk)})
 
+    @action(detail=True, methods=['get'])
+    def shared_resources(self, request, pk=None):
+        """
+        Returns the Resources the Estimate is shared with
+        :param request:
+        :param pk:
+        :return:
+        """
+        # TODO: Check whether the requested estimate is accessible by the logged in user
+        estimate_obj = self.get_object()  # type: Estimate
+
+        estimate_resources_serializer = EstimateResourceSerializer(estimate_obj.estimateresource_set, many=True)
+        return Response({"results": estimate_resources_serializer.data})
+
+    @shared_resources.mapping.patch
+    def update_shared_resources(self, request, pk=None):
+        """
+        Updates the Resources the Estimate is shared with
+        :param request:
+        :param pk:
+        :return:
+        """
+        # TODO: Check whether the requested estimate is accessible by the logged in user
+        estimate.update_shared_resources(self.get_object(), request.data)
+        return Response({"results": {}})
+
 
 class ActivityViewSet(ArchestAuthenticatedModelViewSet):
     """

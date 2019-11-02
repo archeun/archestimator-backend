@@ -34,6 +34,7 @@ def get_progress(estimate_id):
             activity_details = {
                 'id': activity.id,
                 'name': activity.name,
+                'owner': activity.owner.full_name() if activity.owner else '',
                 'estimated_time': activity.estimated_time,
                 'entered_time_directly_to_activity': entered_time_directly_to_activity,
                 'entered_time_to_sub_activities': entered_time_to_sub_activities,
@@ -61,6 +62,7 @@ def get_progress(estimate_id):
                 sub_activity_details = {
                     'id': sub_activity.id,
                     'name': sub_activity.name,
+                    'owner': sub_activity.owner.full_name() if sub_activity.owner else '',
                     'estimated_time': sub_activity.estimated_time,
                     'entered_time': 0,
                     'status': sub_activity.status,

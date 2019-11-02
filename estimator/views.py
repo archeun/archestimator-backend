@@ -177,6 +177,12 @@ class ActivityViewSet(ArchestAuthenticatedModelViewSet):
 
         activity_obj = self.get_object()  # type:Activity
         activity_obj.feature_id = request.data['feature_id']
+        if 'owner_id' in request.data:
+            if not request.data['owner_id']:
+                activity_obj.owner_id = None
+            else:
+                activity_obj.owner_id = request.data['owner_id']
+
         activity_serializer = self.get_serializer(activity_obj, data=request.data, partial=partial)
         activity_serializer.is_valid(raise_exception=True)
         activity_serializer.save()
@@ -201,7 +207,7 @@ class SubActivityViewSet(ArchestAuthenticatedModelViewSet):
             estimated_time=request.data['estimated_time'],
             status=request.data['status'],
         )  # type:SubActivity
-        sub_activity_serializer = self.get_serializer(sub_activity_object, data=request.data)
+        sub_activity_serializer = self.get_serializer(sub_activity_object, data=request.data, partial=True)
         sub_activity_serializer.is_valid(raise_exception=True)
         sub_activity_serializer.save()
         return Response(sub_activity_serializer.data)
@@ -216,6 +222,12 @@ class SubActivityViewSet(ArchestAuthenticatedModelViewSet):
         """
         partial = kwargs.pop('partial', False)
         sub_activity_object = self.get_object()  # type:SubActivity
+
+        if 'owner_id' in request.data:
+            if not request.data['owner_id']:
+                sub_activity_object.owner_id = None
+            else:
+                sub_activity_object.owner_id = request.data['owner_id']
         sub_activity_serializer = self.get_serializer(sub_activity_object, data=request.data, partial=partial)
         sub_activity_serializer.is_valid(raise_exception=True)
         sub_activity_serializer.save()

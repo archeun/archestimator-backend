@@ -96,7 +96,7 @@ class Activity(models.Model):
     estimate = models.ForeignKey(Estimate, on_delete=models.CASCADE)
     estimated_time = models.FloatField(default=0)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES)
-    owner = models.ForeignKey(Resource, on_delete=models.CASCADE, null=True)
+    owner = models.ForeignKey(Resource, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         if self.name:
@@ -113,7 +113,7 @@ class SubActivity(models.Model):
     note = models.TextField(max_length=10000, null=True)
     is_completed = models.BooleanField(default=False)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES)
-    owner = models.ForeignKey(Resource, on_delete=models.CASCADE, null=True)
+    owner = models.ForeignKey(Resource, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.name

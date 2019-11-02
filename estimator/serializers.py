@@ -66,21 +66,26 @@ class EstimateResourceSerializer(serializers.ModelSerializer):
 
 
 class SubActivitySerializer(serializers.ModelSerializer):
+    owner = ResourceSerializer()
+
     class Meta:
         model = SubActivity
         fields = (
             'id', 'name', 'estimated_time', 'note', 'status', 'parent_id', 'STATUS_CHOICES', 'estimate_name',
-            'estimate_id', 'feature_name', 'parent_activity_name', 'parent_activity_id')
+            'estimate_id', 'feature_name', 'parent_activity_name', 'parent_activity_id', 'owner')
 
 
 class ActivitySerializer(serializers.ModelSerializer):
     feature = FeatureSerializer()
     estimate = EstimateSerializer()
     sub_activities = SubActivitySerializer(source='subactivity_set', many=True)
+    owner = ResourceSerializer()
 
     class Meta:
         model = Activity
-        fields = ('id', 'name', 'feature', 'estimate', 'estimated_time', 'status', 'sub_activities', 'STATUS_CHOICES')
+        fields = (
+            'id', 'name', 'feature', 'estimate', 'estimated_time', 'status', 'sub_activities', 'STATUS_CHOICES',
+            'owner')
 
 
 class ActivityWorkEntrySerializer(serializers.ModelSerializer):

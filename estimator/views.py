@@ -91,6 +91,13 @@ class EstimateViewSet(ArchestAuthenticatedModelViewSet):
         estimate_serializer = self.get_serializer(estimate_object, data=request.data, partial=True)
         estimate_serializer.is_valid(raise_exception=True)
         estimate_serializer.save()
+
+        estimate_resource = EstimateResource.objects.create(
+            resource_id=logged_in_user.resource.id,
+            estimate_id=estimate_object.id,
+            access_level=2
+        )
+        estimate_object.estimateresource_set.add(estimate_resource)
         return Response(estimate_serializer.data)
 
     @action(detail=True, methods=['get'])
@@ -132,7 +139,8 @@ class EstimateViewSet(ArchestAuthenticatedModelViewSet):
         estimate_obj = self.get_object()  # type: Estimate
 
         estimate_resources_serializer = EstimateResourceSerializer(
-            estimate.get_shared_resources(estimate_obj, request.user.username), many=True)
+            estimate.get_shared_resources(estimate_obj, request.user.username), many=True
+        )
         return Response({"results": estimate_resources_serializer.data})
 
     @shared_resources.mapping.patch

@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 from estimator.models import Estimate, EstimateResource
-from estimator.serializers import FeatureSerializer
 
 
 def get_records(request):
@@ -15,7 +15,8 @@ def get_records(request):
     user = request.user  # type:User
     if user.groups.filter(name='Project Admins').exists():
         return Estimate.objects.all()
-    return Estimate.objects.filter(owner__user__username=request.user)
+
+    return Estimate.objects.filter(Q(owner__user__username=user) | Q(resources__user__username=request.user))
 
 
 def get_progress(estimate_id):

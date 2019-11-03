@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 from estimator.models import Phase
 
@@ -31,7 +32,9 @@ def get_estimates(request, phase_id):
     if user.groups.filter(name='Project Admins').exists():
         return Phase.objects.get(pk=phase_id).estimate_set.all()
 
-    return Phase.objects.get(pk=phase_id).estimate_set.filter(owner__user__username=user)
+    return Phase.objects.get(pk=phase_id).estimate_set.filter(
+        Q(owner__user__username=user) | Q(resources__user__username=request.user)
+    )
 
 
 def get_resources(request, phase_id):

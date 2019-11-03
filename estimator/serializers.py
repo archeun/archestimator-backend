@@ -73,15 +73,16 @@ class SubActivitySerializer(serializers.ModelSerializer):
         request = self.context['request']
         sub_activity_owner_username = obj.owner.user.username if obj.owner else None
         if request:
-            return request.user.username == sub_activity_owner_username\
-                   or sub_activity_owner_username is None\
+            return request.user.username == sub_activity_owner_username \
+                   or sub_activity_owner_username is None \
                    or obj.parent.estimate.owner.user.username == request.user.username
 
     class Meta:
         model = SubActivity
         fields = (
             'id', 'name', 'estimated_time', 'note', 'status', 'parent_id', 'STATUS_CHOICES', 'estimate_name',
-            'estimate_id', 'feature_name', 'parent_activity_name', 'parent_activity_id', 'owner', 'is_editable')
+            'estimate_id', 'feature_name', 'parent_activity_name', 'parent_activity_id', 'owner', 'is_editable',
+            'status_name')
 
 
 class ActivitySerializer(serializers.ModelSerializer):
@@ -101,7 +102,7 @@ class ActivitySerializer(serializers.ModelSerializer):
         model = Activity
         fields = (
             'id', 'name', 'feature', 'estimate', 'estimated_time', 'status', 'sub_activities', 'STATUS_CHOICES',
-            'owner', 'is_editable')
+            'owner', 'is_editable', 'status_name')
 
 
 class ActivityWorkEntrySerializer(serializers.ModelSerializer):

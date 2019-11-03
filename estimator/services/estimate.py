@@ -40,6 +40,7 @@ def get_progress(estimate_id):
                 'entered_time_directly_to_activity': entered_time_directly_to_activity,
                 'entered_time_to_sub_activities': entered_time_to_sub_activities,
                 'status': activity.status,
+                'status_name': activity.status_name(),
                 'work_entries': [],
                 'sub_activities': []
             }
@@ -67,6 +68,7 @@ def get_progress(estimate_id):
                     'estimated_time': sub_activity.estimated_time,
                     'entered_time': 0,
                     'status': sub_activity.status,
+                    'status_name': sub_activity.status_name(),
                     'work_entries': []
                 }
                 sub_activity_work_entries = sub_activity.subactivityworkentry_set.all()

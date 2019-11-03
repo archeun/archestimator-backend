@@ -104,6 +104,9 @@ class Activity(models.Model):
 
         return 'null'
 
+    def status_name(self):
+        return self.get_status_display()
+
 
 class SubActivity(models.Model):
     STATUS_CHOICES = STATUSES
@@ -132,6 +135,9 @@ class SubActivity(models.Model):
 
     def feature_name(self):
         return self.parent.feature.name
+
+    def status_name(self):
+        return self.get_status_display()
 
 
 class ActivityWorkEntry(models.Model):

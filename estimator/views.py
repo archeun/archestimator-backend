@@ -203,6 +203,26 @@ class ActivityViewSet(ArchestAuthenticatedModelViewSet):
         activity_serializer.save()
         return Response(activity_serializer.data)
 
+    @action(detail=True, methods=['get'])
+    def work_entries(self, request, pk=None):
+        """
+        Returns the Work Entries logged against the Activity
+        :param request:
+        :param pk:
+        :return:
+        """
+        # TODO: Check whether the requested Activity is accessible by the logged in user
+        activity_obj = self.get_object()  # type: Activity
+
+        activity_work_entry_serializer = ActivityWorkEntrySerializer(
+            activity_obj.activityworkentry_set.all(),
+            many=True,
+            context={
+                'request': request
+            }
+        )
+        return Response({"results": activity_work_entry_serializer.data})
+
 
 class SubActivityViewSet(ArchestAuthenticatedModelViewSet):
     """
@@ -247,6 +267,26 @@ class SubActivityViewSet(ArchestAuthenticatedModelViewSet):
         sub_activity_serializer.is_valid(raise_exception=True)
         sub_activity_serializer.save()
         return Response(sub_activity_serializer.data)
+
+    @action(detail=True, methods=['get'])
+    def work_entries(self, request, pk=None):
+        """
+        Returns the Work Entries logged against the SubActivity
+        :param request:
+        :param pk:
+        :return:
+        """
+        # TODO: Check whether the requested SubActivity is accessible by the logged in user
+        sub_activity_obj = self.get_object()  # type: SubActivity
+
+        sub_activity_work_entry_serializer = SubActivityWorkEntrySerializer(
+            sub_activity_obj.subactivityworkentry_set.all(),
+            many=True,
+            context={
+                'request': request
+            }
+        )
+        return Response({"results": sub_activity_work_entry_serializer.data})
 
 
 class ActivityWorkEntriesViewSet(ArchestAuthenticatedModelViewSet):

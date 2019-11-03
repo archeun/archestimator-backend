@@ -67,12 +67,21 @@ class EstimateResourceSerializer(serializers.ModelSerializer):
 
 class SubActivitySerializer(serializers.ModelSerializer):
     owner = ResourceSerializer()
+    is_editable = serializers.SerializerMethodField('is_editable_sub_activity', read_only=True)
+
+    def is_editable_sub_activity(self, obj):
+        request = self.context['request']
+        sub_activity_owner_username = obj.owner.user.username if obj.owner else None
+        if request:
+            return request.user.username == sub_activity_owner_username\
+                   or sub_activity_owner_username is None\
+                   or obj.parent.estimate.owner.user.username == request.user.username
 
     class Meta:
         model = SubActivity
         fields = (
             'id', 'name', 'estimated_time', 'note', 'status', 'parent_id', 'STATUS_CHOICES', 'estimate_name',
-            'estimate_id', 'feature_name', 'parent_activity_name', 'parent_activity_id', 'owner')
+            'estimate_id', 'feature_name', 'parent_activity_name', 'parent_activity_id', 'owner', 'is_editable')
 
 
 class ActivitySerializer(serializers.ModelSerializer):
@@ -80,12 +89,19 @@ class ActivitySerializer(serializers.ModelSerializer):
     estimate = EstimateSerializer()
     sub_activities = SubActivitySerializer(source='subactivity_set', many=True)
     owner = ResourceSerializer()
+    is_editable = serializers.SerializerMethodField('is_editable_activity', read_only=True)
+
+    def is_editable_activity(self, obj):
+        request = self.context['request']
+        activity_owner_username = obj.owner.user.username if obj.owner else None
+        if request:
+            return request.user.username == activity_owner_username or activity_owner_username is None or obj.estimate.owner.user.username == request.user.username
 
     class Meta:
         model = Activity
         fields = (
             'id', 'name', 'feature', 'estimate', 'estimated_time', 'status', 'sub_activities', 'STATUS_CHOICES',
-            'owner')
+            'owner', 'is_editable')
 
 
 class ActivityWorkEntrySerializer(serializers.ModelSerializer):

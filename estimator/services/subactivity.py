@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 from estimator.models import SubActivity
 
@@ -14,4 +15,7 @@ def get_records(request):
     user = request.user  # type:User
     if user.groups.filter(name='Project Admins').exists():
         return SubActivity.objects.all()
-    return SubActivity.objects.filter(parent__estimate__owner__user__username=request.user)
+    return SubActivity.objects.filter(
+        Q(parent__estimate__owner__user__username=request.user)
+        | Q(owner__user__username=request.user)
+        | Q(owner__user__username__isnull=True))

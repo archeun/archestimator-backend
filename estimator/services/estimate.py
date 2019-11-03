@@ -16,7 +16,7 @@ def get_records(request):
     if user.groups.filter(name='Project Admins').exists():
         return Estimate.objects.all()
 
-    return Estimate.objects.filter(Q(owner__user__username=user) | Q(resources__user__username=request.user))
+    return Estimate.objects.filter(Q(owner__user__username=user) | Q(resources__user__username=request.user)).distinct()
 
 
 def get_progress(estimate_id):
@@ -162,3 +162,18 @@ def update_shared_resources(estimate, shared_resources_options):
             existing_resource.save()
 
     return True
+
+
+def get_shared_resources(estimate_obj, logged_in_username):
+    """
+
+    :param mode:
+    :param logged_in_username:
+    :param estimate_obj:
+    :type estimate_obj: Estimate
+    :return:
+    """
+    if estimate_obj.owner.user.username == logged_in_username:
+        return estimate_obj.estimateresource_set
+    else:
+        return estimate_obj.estimateresource_set.filter(resource__user__username=logged_in_username)

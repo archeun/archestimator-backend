@@ -101,7 +101,12 @@ class EstimateViewSet(ArchestAuthenticatedModelViewSet):
         :param pk:
         :return:
         """
-        activity_serializer = ActivitySerializer(Activity.objects.filter(estimate=pk), many=True)
+        activity_serializer = ActivitySerializer(
+            Activity.objects.filter(estimate=pk),
+            many=True,
+            context={
+                'request': request
+            })
         return Response({"results": activity_serializer.data})
 
     @action(detail=True, methods=['get'])
@@ -126,7 +131,8 @@ class EstimateViewSet(ArchestAuthenticatedModelViewSet):
         # TODO: Check whether the requested estimate is accessible by the logged in user
         estimate_obj = self.get_object()  # type: Estimate
 
-        estimate_resources_serializer = EstimateResourceSerializer(estimate_obj.estimateresource_set, many=True)
+        estimate_resources_serializer = EstimateResourceSerializer(
+            estimate.get_shared_resources(estimate_obj, request.user.username), many=True)
         return Response({"results": estimate_resources_serializer.data})
 
     @shared_resources.mapping.patch

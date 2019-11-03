@@ -34,7 +34,7 @@ def get_estimates(request, phase_id):
 
     return Phase.objects.get(pk=phase_id).estimate_set.filter(
         Q(owner__user__username=user) | Q(resources__user__username=request.user)
-    )
+    ).distinct()
 
 
 def get_resources(request, phase_id):

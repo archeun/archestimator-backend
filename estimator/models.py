@@ -140,6 +140,7 @@ class ActivityWorkEntry(models.Model):
     worked_hours = models.FloatField(default=0)
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE)
     note = models.TextField(max_length=10000, default='', null=True)
+    owner = models.ForeignKey(Resource, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.activity.estimate.owner.full_name() + ' worked on Activity ' + self.activity.name + ' on ' \
@@ -152,6 +153,7 @@ class SubActivityWorkEntry(models.Model):
     worked_hours = models.FloatField(default=0)
     sub_activity = models.ForeignKey(SubActivity, on_delete=models.CASCADE)
     note = models.TextField(max_length=10000, default='', null=True)
+    owner = models.ForeignKey(Resource, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.sub_activity.parent.estimate.owner.full_name() + ' worked on Sub Activity ' \

@@ -106,15 +106,17 @@ class ActivitySerializer(serializers.ModelSerializer):
 
 class ActivityWorkEntrySerializer(serializers.ModelSerializer):
     activity = ActivitySerializer()
+    owner = ResourceSerializer()
 
     class Meta:
         model = ActivityWorkEntry
-        fields = ('id', 'date', 'worked_hours', 'activity', 'note', 'ENTRY_TYPE')
+        fields = ('id', 'date', 'worked_hours', 'activity', 'note', 'ENTRY_TYPE', 'owner')
 
 
 class SubActivityWorkEntrySerializer(serializers.ModelSerializer):
     sub_activity = SubActivitySerializer()
+    owner = ResourceSerializer()
 
     class Meta:
         model = SubActivityWorkEntry
-        fields = ('id', 'date', 'worked_hours', 'sub_activity', 'note', 'ENTRY_TYPE')
+        fields = ('id', 'date', 'worked_hours', 'sub_activity', 'note', 'ENTRY_TYPE', 'owner')

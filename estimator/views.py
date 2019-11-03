@@ -267,6 +267,7 @@ class ActivityWorkEntriesViewSet(ArchestAuthenticatedModelViewSet):
             worked_hours=request.data['worked_hours'],
             date=request.data['date'],
             note=request.data['note'],
+            owner_id=Resource.objects.filter(user__username=request.user).get().id
         )  # type:ActivityWorkEntry
         activity_we_serializer = self.get_serializer(activity_we_object, data=request.data, partial=True)
         activity_we_serializer.is_valid(raise_exception=True)
@@ -308,6 +309,7 @@ class SubActivityWorkEntriesViewSet(ArchestAuthenticatedModelViewSet):
             worked_hours=request.data['worked_hours'],
             date=request.data['date'],
             note=request.data['note'],
+            owner_id=Resource.objects.filter(user__username=request.user).get().id
         )  # type:SubActivityWorkEntry
         sub_activity_we_serializer = self.get_serializer(sub_activity_we_object, data=request.data, partial=True)
         sub_activity_we_serializer.is_valid(raise_exception=True)

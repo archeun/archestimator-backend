@@ -14,7 +14,7 @@ def get_activity_work_entries(request):
     user = request.user  # type:User
     if user.groups.filter(name='Project Admins').exists():
         return ActivityWorkEntry.objects.all()
-    return ActivityWorkEntry.objects.filter(activity__estimate__owner__user__username=user)
+    return ActivityWorkEntry.objects.filter(owner__user__username=user)
 
 
 def get_sub_activity_work_entries(request):
@@ -28,4 +28,4 @@ def get_sub_activity_work_entries(request):
     user = request.user  # type:User
     if user.groups.filter(name='Project Admins').exists():
         return SubActivityWorkEntry.objects.all()
-    return SubActivityWorkEntry.objects.filter(sub_activity__parent__estimate__owner__user__username=user)
+    return SubActivityWorkEntry.objects.filter(owner__user__username=user)

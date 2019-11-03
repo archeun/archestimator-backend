@@ -18,4 +18,6 @@ def get_records(request):
     return SubActivity.objects.filter(
         Q(parent__estimate__owner__user__username=request.user)
         | Q(owner__user__username=request.user)
-        | Q(owner__user__username__isnull=True))
+        | Q(owner__user__username__isnull=True)
+        | Q(parent__estimate__resources__user__username=user)
+    ).distinct()

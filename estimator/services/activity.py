@@ -19,4 +19,5 @@ def get_records(request):
         Q(estimate__owner__user__username=user)
         | Q(owner__user__username=request.user)
         | Q(owner__user__username__isnull=True)
-    )
+        | Q(estimate__resources__user__username=user)
+    ).distinct()

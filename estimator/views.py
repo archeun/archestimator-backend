@@ -223,7 +223,8 @@ class ActivityViewSet(ArchestAuthenticatedModelViewSet):
                 'request': request
             }
         )
-        return Response({"results": activity_work_entry_serializer.data})
+        activity_data = self.get_serializer(activity_obj).data
+        return Response({"results": {'work_entries': activity_work_entry_serializer.data, 'activity': activity_data}})
 
 
 class SubActivityViewSet(ArchestAuthenticatedModelViewSet):
@@ -288,7 +289,9 @@ class SubActivityViewSet(ArchestAuthenticatedModelViewSet):
                 'request': request
             }
         )
-        return Response({"results": sub_activity_work_entry_serializer.data})
+        sub_activity_data = self.get_serializer(sub_activity_obj).data
+        return Response(
+            {"results": {'work_entries': sub_activity_work_entry_serializer.data, 'sub_activity': sub_activity_data}})
 
 
 class ActivityWorkEntriesViewSet(ArchestAuthenticatedModelViewSet):

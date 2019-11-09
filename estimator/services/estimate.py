@@ -111,6 +111,8 @@ def get_completion_percentage_for_activity(activity_details):
 
     if estimated_time > 0:
         completion_percentage = min((total_entered / estimated_time) * 100, 100)
+    else:
+        completion_percentage = 100
 
     return round(completion_percentage, 2)
 
@@ -122,6 +124,8 @@ def get_completion_percentage_for_sub_activity(sub_activity_details):
 
     if estimated_time > 0:
         completion_percentage = min((total_entered / estimated_time) * 100, 100)
+    else:
+        completion_percentage = 100
 
     return round(completion_percentage, 2)
 

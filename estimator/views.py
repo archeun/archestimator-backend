@@ -191,7 +191,9 @@ class ActivityViewSet(ArchestAuthenticatedModelViewSet):
         partial = kwargs.pop('partial', False)
 
         activity_obj = self.get_object()  # type:Activity
-        activity_obj.feature_id = request.data['feature_id']
+        if 'feature_id' in request.data:
+            activity_obj.feature_id = request.data['feature_id']
+
         if 'owner_id' in request.data:
             if not request.data['owner_id']:
                 activity_obj.owner_id = None

@@ -44,6 +44,11 @@ class ProjectViewSet(ArchestAuthenticatedModelViewSet):
     def get_queryset(self):
         return project.get_records(self.request)
 
+    @action(detail=True, methods=['get'])
+    def phases(self, request, pk=None):
+        phase_serializer = PhaseSerializer(project.get_phases(request, pk), many=True)
+        return Response({"results": phase_serializer.data})
+
     serializer_class = ProjectSerializer
 
 

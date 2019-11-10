@@ -33,10 +33,16 @@ class ProjectSerializer(serializers.ModelSerializer):
 class PhaseSerializer(serializers.ModelSerializer):
     project = ProjectSerializer()
     managers = ResourceSerializer(read_only=True, many=True)
+    resources = ResourceSerializer(read_only=True, many=True)
+    resource_ids = serializers.PrimaryKeyRelatedField(many=True, read_only=False, queryset=Resource.objects.all(),
+                                                      source='resources')
+    manager_ids = serializers.PrimaryKeyRelatedField(many=True, read_only=False, queryset=Resource.objects.all(),
+                                                     source='managers')
 
     class Meta:
         model = Phase
-        fields = ('id', 'name', 'project', 'start_date', 'end_date', 'managers')
+        fields = (
+        'id', 'name', 'project', 'start_date', 'end_date', 'managers', 'resources', 'resource_ids', 'manager_ids')
 
 
 class FeatureSerializer(serializers.ModelSerializer):

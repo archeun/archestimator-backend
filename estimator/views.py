@@ -21,6 +21,16 @@ TODO: IMPORTANT!!!!!!!!!! --------- For All CRUD operations check authenticate a
 """
 
 
+class ResourceViewSet(ArchestAuthenticatedModelViewSet):
+    """
+    API endpoint that allows Resources to be viewed or edited.
+    """
+
+    queryset = Resource.objects.all()
+
+    serializer_class = ResourceSerializer
+
+
 class CustomerViewSet(ArchestAuthenticatedModelViewSet):
     """
     API endpoint that allows Customers to be viewed or edited.
@@ -82,6 +92,23 @@ class PhaseViewSet(ArchestAuthenticatedModelViewSet):
         phase_serializer.is_valid(raise_exception=True)
         phase_serializer.save()
         return Response(phase_serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        """
+        TODO: Refactor this function to handle validations properly. Also should be generic.
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        partial = kwargs.pop('partial', False)
+
+        phase_obj = self.get_object()  # type:Phase
+        print(request.data)
+        activity_serializer = self.get_serializer(phase_obj, data=request.data, partial=partial)
+        activity_serializer.is_valid(raise_exception=True)
+        activity_serializer.save()
+        return Response(activity_serializer.data)
 
 
 class EstimateViewSet(ArchestAuthenticatedModelViewSet):

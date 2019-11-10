@@ -48,6 +48,6 @@ def get_resources(request, phase_id):
     """
     user = request.user  # type:User
     if user.groups.filter(name='Project Admins').exists():
-        return Phase.objects.get(pk=phase_id).estimate_set.all()
+        return Phase.objects.get(pk=phase_id).resources.all()
 
     return Phase.objects.get(pk=phase_id).resources.all()

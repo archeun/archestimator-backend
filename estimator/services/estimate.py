@@ -177,7 +177,9 @@ def get_shared_resources(estimate_obj, logged_in_username):
     :type estimate_obj: Estimate
     :return:
     """
-    if estimate_obj.owner.user.username == logged_in_username:
+
+    is_project_admin = User.objects.get(username=logged_in_username).groups.filter(name='Project Admins').exists()
+    if estimate_obj.owner.user.username == logged_in_username or is_project_admin:
         return estimate_obj.estimateresource_set
     else:
         return estimate_obj.estimateresource_set.filter(resource__user__username=logged_in_username)

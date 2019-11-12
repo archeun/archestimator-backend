@@ -25,6 +25,7 @@ SECRET_KEY = 'u30sl#-&cay(3hmg8c-q+n7r36ype6d)5iq!5&zy#xe8oush9@'
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    '127.0.0.1',
     'archestimator.herokuapp.com',
 ]
 

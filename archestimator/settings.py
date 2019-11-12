@@ -24,7 +24,9 @@ SECRET_KEY = 'u30sl#-&cay(3hmg8c-q+n7r36ype6d)5iq!5&zy#xe8oush9@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'archestimator.herokuapp.com',
+]
 
 # Application definition
 

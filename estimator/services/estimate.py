@@ -104,7 +104,6 @@ def get_progress(estimate_id):
 
 
 def get_completion_percentage_for_activity(activity_details):
-    completion_percentage = 0
     total_entered = activity_details['entered_time_to_sub_activities'] + activity_details[
         'entered_time_directly_to_activity']
     estimated_time = activity_details['estimated_time']
@@ -118,7 +117,6 @@ def get_completion_percentage_for_activity(activity_details):
 
 
 def get_completion_percentage_for_sub_activity(sub_activity_details):
-    completion_percentage = 0
     total_entered = sub_activity_details['entered_time']
     estimated_time = sub_activity_details['estimated_time']
 
@@ -179,7 +177,9 @@ def get_shared_resources(estimate_obj, logged_in_username):
     :type estimate_obj: Estimate
     :return:
     """
-    if estimate_obj.owner.user.username == logged_in_username:
+
+    is_project_admin = User.objects.get(username=logged_in_username).groups.filter(name='Project Admins').exists()
+    if estimate_obj.owner.user.username == logged_in_username or is_project_admin:
         return estimate_obj.estimateresource_set
     else:
         return estimate_obj.estimateresource_set.filter(resource__user__username=logged_in_username)

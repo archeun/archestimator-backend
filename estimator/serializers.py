@@ -33,10 +33,16 @@ class ProjectSerializer(serializers.ModelSerializer):
 class PhaseSerializer(serializers.ModelSerializer):
     project = ProjectSerializer()
     managers = ResourceSerializer(read_only=True, many=True)
+    resources = ResourceSerializer(read_only=True, many=True)
+    resource_ids = serializers.PrimaryKeyRelatedField(many=True, read_only=False, queryset=Resource.objects.all(),
+                                                      source='resources')
+    manager_ids = serializers.PrimaryKeyRelatedField(many=True, read_only=False, queryset=Resource.objects.all(),
+                                                     source='managers')
 
     class Meta:
         model = Phase
-        fields = ('id', 'name', 'project', 'start_date', 'end_date', 'managers')
+        fields = (
+            'id', 'name', 'project', 'start_date', 'end_date', 'managers', 'resources', 'resource_ids', 'manager_ids')
 
 
 class FeatureSerializer(serializers.ModelSerializer):
@@ -73,9 +79,12 @@ class SubActivitySerializer(serializers.ModelSerializer):
         request = self.context['request']
         sub_activity_owner_username = obj.owner.user.username if obj.owner else None
         if request:
-            return request.user.username == sub_activity_owner_username \
-                   or sub_activity_owner_username is None \
-                   or obj.parent.estimate.owner.user.username == request.user.username
+            logged_in_user_is_sub_act_owner = request.user.username == sub_activity_owner_username
+            sub_activity_has_no_owner = sub_activity_owner_username is None
+            logged_in_user_is_estimate_owner = obj.parent.estimate.owner.user.username == request.user.username
+            logged_in_user_is_a_project_manager = User.objects.get(username=request.user.username).groups.filter(
+                name='Project Admins').exists()
+            return logged_in_user_is_sub_act_owner or sub_activity_has_no_owner or logged_in_user_is_estimate_owner or logged_in_user_is_a_project_manager
 
     class Meta:
         model = SubActivity
@@ -96,7 +105,12 @@ class ActivitySerializer(serializers.ModelSerializer):
         request = self.context['request']
         activity_owner_username = obj.owner.user.username if obj.owner else None
         if request:
-            return request.user.username == activity_owner_username or activity_owner_username is None or obj.estimate.owner.user.username == request.user.username
+            logged_in_user_is_activity_owner = request.user.username == activity_owner_username
+            activity_has_no_owner = activity_owner_username is None
+            logged_in_user_is_estimate_owner = obj.estimate.owner.user.username == request.user.username
+            logged_in_user_is_a_project_manager = User.objects.get(username=request.user.username).groups.filter(
+                name='Project Admins').exists()
+            return logged_in_user_is_activity_owner or activity_has_no_owner or logged_in_user_is_estimate_owner or logged_in_user_is_a_project_manager
 
     class Meta:
         model = Activity

@@ -2,7 +2,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from estimator.models import Phase
-from estimator.serializers import PhaseSerializer, EstimateSerializer, ResourceSerializer
+from estimator.serializers import PhaseSerializer, EstimateSerializer, ResourceSerializer, FeatureSerializer
 from estimator.services import phase
 from estimator.views.archest_authenticated_model_viewset import ArchestAuthenticatedModelViewSet
 
@@ -27,6 +27,11 @@ class PhaseViewSet(ArchestAuthenticatedModelViewSet):
     def resources(self, request, pk=None):
         resource_serializer = ResourceSerializer(phase.get_resources(request, pk), many=True)
         return Response({"results": resource_serializer.data})
+
+    @action(detail=True, methods=['get'])
+    def features(self, request, pk=None):
+        feature_serializer = FeatureSerializer(phase.get_features(request, pk), many=True)
+        return Response({"results": feature_serializer.data})
 
     def create(self, request, *args, **kwargs):
         phase_object = Phase.objects.create(
